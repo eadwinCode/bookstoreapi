@@ -1,4 +1,4 @@
-# django_vue
+# BookStoreAPI
 
 ## Introduction
 A quick example of how to use [Django-Ninja-Extra](https://eadwincode.github.io/django-ninja-extra/), [Ninja-Schema](https://github.com/eadwinCode/ninja-schema) and [NinjaJWT](https://eadwincode.github.io/django-ninja-jwt/)

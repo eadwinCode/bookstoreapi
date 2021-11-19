@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  bookstoreapi-dev:
+    container_name: bookstoreapi_dev
+    build:
+      context: .
+      dockerfile: '${PWD}/docker/dev.Dockerfile'
+    env_file:
+      - ./bookstore.env
+    volumes:
+      - ./bookstoreapi:/var/app/bookstoreapi
+    command: /var/app/run_local.sh
+    ports:
+      - '8001:8001'
+    image: bookstoreapi_dev:latest
+    depends_on:
+      - base
+      - bookstoreapi_dev_db
+    networks:
+      - base-network
+
+  bookstoreapi_dev_db:
+    image: postgres
+    restart: always
+    env_file:
+      - ./bookstore.env
+    volumes:
+      - bookstoreapi_dev-db:/var/lib/postgresql/data
+    networks:
+      - base-network
+
+  celery:
+    env_file:
+      - ./bookstore.env
+    image: bookstoreapi_dev
+    command: >
+      sh /var/celery/start_celery_server.sh
+    depends_on:
+      - redis
+      - bookstoreapi-dev
+      - celery-flower
+    networks:
+      - base-network
+
+  celery-flower:
+    environment:
+      - CELERY_BROKER_URL=redis://redis/0
+      - FLOWER_PORT=8888
+    image: mher/flower
+    ports:
+      - "8888:8888"
+    depends_on:
+      - redis
+    networks:
+      - base-network
+
+volumes:
+  bookstoreapi_dev-db:

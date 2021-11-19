@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  # Base image for others to build off of.
+  base:
+    build:
+      context: .
+      dockerfile: '${PWD}/docker/base.Dockerfile'
+    image: base:latest
+
+  redis:
+    restart: always
+    image: redis
+    networks:
+      - base-network
+
+networks:
+  base-network:
+    external: false

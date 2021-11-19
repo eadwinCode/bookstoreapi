@@ -1,0 +1,47 @@
+name: Full Test
+
+on:
+  push:
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r test-requirements.txt
+      - name: Black
+        run: black --check bookstoreapi
+      - name: isort
+        run: isort --check bookstoreapi
+      - name: Flake8
+        run: flake8 bookstoreapi
+      - name: Book Store API Test
+        run: pytest
+  codestyle:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version:  3.8
+      - name: Install Dependencies
+        run: flit install --symlink
+      - name: Black
+        run: black --check ninja_extra tests
+      - name: isort
+        run: isort --check ninja_extra tests
+      - name: Flake8
+        run: flake8 ninja_extra tests

@@ -8,7 +8,7 @@ from bookstoreapi.apps.bookstores.models import Store, StoreBookSubscription
 class StoreViewMixin:
     request: Any
 
-    def get_queryset(self) -> QuerySet[Store]:
+    def get_queryset(self) -> QuerySet:
         return Store.objects.filter(owner_id=self.context.request.user)
 
 

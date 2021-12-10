@@ -1,5 +1,8 @@
+import uuid
+
 from django.contrib.auth import get_user_model
-from ninja_extra import APIController, route, router, status
+from django.urls import reverse
+from ninja_extra import api_controller, route, status
 from ninja_extra.controllers import Detail, Id
 from ninja_extra.pagination import (
     PageNumberPaginationExtra,
@@ -25,8 +28,8 @@ from bookstoreapi.apps.bookstores.tasks import process_subscription_notification
 from bookstoreapi.apps.core.logger import logger
 
 
-@router("/stores", permissions=[IsAuthenticated], auth=JWTAuth())
-class StoresController(StoreViewMixin, APIController):
+@api_controller("/stores", permissions=[IsAuthenticated], auth=JWTAuth())
+class StoresController(StoreViewMixin):
     @route.post("", response=[Id, Detail(status_code=400)], url_name="create")
     def create_store(self, store: StoreCreateSchema):
         try:
@@ -43,6 +46,7 @@ class StoresController(StoreViewMixin, APIController):
     )
     @paginate(PageNumberPaginationExtra)
     def list_stores(self):
+        ss = reverse('ninja:detail', kwargs={'store_id': uuid.uuid4()})
         return self.get_queryset()
 
     @route.get("/{uuid:store_id}", response=StoreRetrieveSchema, url_name="detail")
@@ -80,13 +84,13 @@ class StoresController(StoreViewMixin, APIController):
         )
 
 
-@router("/stores/", permissions=[IsAuthenticated], auth=JWTAuth())
-class StoreBookController(StoreViewMixin, APIController):
+@api_controller("/stores/{uuid:store_id}", permissions=[IsAuthenticated], auth=JWTAuth())
+class StoreBookController(StoreViewMixin):
     User = get_user_model()
-    base_url = "{uuid:store_id}"
+    base_url = ""
 
     @route.get(
-        f"{base_url}/books",
+        "/books",
         response=PaginatedResponseSchema[StoreBookSchema],
         url_name="books",
     )
@@ -98,7 +102,7 @@ class StoreBookController(StoreViewMixin, APIController):
         return stores
 
     @route.post(
-        f"{base_url}/book/create",
+        "/book/create",
         response=[(201, BookSchema), Detail(status_code=400)],
         url_name="book-create",
     )
@@ -127,7 +131,7 @@ class StoreBookController(StoreViewMixin, APIController):
         return store_book
 
     @route.post(
-        f"{base_url}" + "/book/{uuid:book_id}/borrow/{int:user_id}/",
+        "/book/{uuid:book_id}/borrow/{int:user_id}/",
         response={200: BorrowOrReturnStoreBookSchema, 400: dict},
         url_name="book-borrow",
     )
@@ -149,7 +153,7 @@ class StoreBookController(StoreViewMixin, APIController):
         return store_book
 
     @route.post(
-        f"{base_url}" + "/book/{uuid:book_id}/return",
+        "/book/{uuid:book_id}/return",
         response={200: StoreMessage, 400: StoreMessage},
         url_name="book-return",
     )

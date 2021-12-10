@@ -2,7 +2,7 @@ from uuid import UUID
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
-from ninja_extra import APIController, route, router, status
+from ninja_extra import api_controller, route, status
 from ninja_extra.controllers import Detail, Ok
 from ninja_extra.pagination import (
     PageNumberPaginationExtra,
@@ -20,8 +20,8 @@ from bookstoreapi.apps.bookstores.schemes.stores import StoreBookSubscriptionSer
 User = get_user_model()
 
 
-@router("/books", auth=JWTAuth(), permissions=[IsAuthenticated])
-class StoryBookSubscribeController(StoryBookQuerySetMixin, APIController):
+@api_controller("/books", auth=JWTAuth(), permissions=[IsAuthenticated])
+class StoryBookSubscribeController(StoryBookQuerySetMixin):
     @route.post(
         "/{uuid:store_book_id}/{int:user_id}/subscriber",
         url_name="subscribe",

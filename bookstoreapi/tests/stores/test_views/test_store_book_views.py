@@ -67,11 +67,11 @@ class TestStoreView:
             "description": "Some description",
             "author": "Eadwin",
         }
-        response = client.post(f"{store.id}/book/create", json=payload, headers=headers)
+        response = client.post(f"stores/{store.id}/book/create", json=payload, headers=headers)
         assert response.status_code == status.HTTP_201_CREATED
 
         response = client.post(
-            f"/{store.id}/book/create", json=payload, headers=headers
+            f"stores/{store.id}/book/create", json=payload, headers=headers
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 

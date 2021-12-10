@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth import get_user_model
-from ninja_extra import APIController, route, router, status
+from ninja_extra import api_controller, route, status
 from ninja_extra.permissions import IsAdminUser, IsAuthenticated
 from ninja_jwt.authentication import JWTAuth
 from ninja_jwt.controller import TokenObtainSlidingController, schema
@@ -17,8 +17,8 @@ from bookstoreapi.apps.users.schema import (
 User = get_user_model()
 
 
-@router("/api/auth", tags=["users"], auth=JWTAuth())
-class UserController(APIController):
+@api_controller("/api/auth", tags=["users"], auth=JWTAuth())
+class UserController:
     @route.post(
         "/create", response={201: UserTokenOutSchema}, url_name="user-create", auth=None
     )
@@ -54,7 +54,7 @@ class UserController(APIController):
         return self.create_response("", status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router("/api/auth", tags=["auth"])
+@api_controller("/api/auth", tags=["auth"])
 class UserTokenController(TokenObtainSlidingController):
     auto_import = True
 

@@ -1,7 +1,6 @@
 import uuid
 
 from django.contrib.auth import get_user_model
-from django.urls import reverse
 from ninja_extra import api_controller, route, status
 from ninja_extra.controllers import Detail, Id
 from ninja_extra.pagination import (
@@ -46,7 +45,6 @@ class StoresController(StoreViewMixin):
     )
     @paginate(PageNumberPaginationExtra)
     def list_stores(self):
-        ss = reverse('ninja:detail', kwargs={'store_id': uuid.uuid4()})
         return self.get_queryset()
 
     @route.get("/{uuid:store_id}", response=StoreRetrieveSchema, url_name="detail")

@@ -1,5 +1,3 @@
-import uuid
-
 from django.contrib.auth import get_user_model
 from ninja_extra import api_controller, route, status
 from ninja_extra.controllers import Detail, Id
@@ -82,7 +80,9 @@ class StoresController(StoreViewMixin):
         )
 
 
-@api_controller("/stores/{uuid:store_id}", permissions=[IsAuthenticated], auth=JWTAuth())
+@api_controller(
+    "/stores/{uuid:store_id}", permissions=[IsAuthenticated], auth=JWTAuth()
+)
 class StoreBookController(StoreViewMixin):
     User = get_user_model()
     base_url = ""

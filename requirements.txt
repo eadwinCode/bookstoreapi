@@ -3,7 +3,7 @@ pydantic~=1.8.2
 celery==4.2.1
 django-cors-headers==3.5.0
 factory-boy==2.12.0
-gunicorn==20.0.4
+gunicorn==20.1.0
 psycopg2-binary==2.8.6
 redis==3.5.3
 django-ninja-extra

@@ -4,7 +4,8 @@ from django.contrib.auth import get_user_model
 from ninja_extra import api_controller, route, status
 from ninja_extra.permissions import IsAdminUser, IsAuthenticated
 from ninja_jwt.authentication import JWTAuth
-from ninja_jwt.controller import TokenObtainSlidingController, schema
+from ninja_jwt.controller import TokenObtainSlidingController
+from ninja_jwt import schema
 from ninja_jwt.tokens import SlidingToken
 
 from bookstoreapi.apps.users.schema import (

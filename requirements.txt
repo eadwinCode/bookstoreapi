@@ -12,3 +12,4 @@ flake8==4.0.1
 isort==5.10.1
 black==21.12b0
 click==8.0.4
+ninja-schema

@@ -1,5 +1,5 @@
 Django~=3.2.9
-pydantic~=1.8.2
+pydantic~=1.10.7
 celery==4.2.1
 django-cors-headers==3.5.0
 factory-boy==2.12.0

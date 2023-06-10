@@ -1,24 +1,22 @@
 #################
 # BookStore production Image
 #################
-FROM python:3.6-slim AS base
-
-RUN mkdir    /var/app
-WORKDIR    /var/app
-
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+FROM base
 
 ENV DJANGO_SETTINGS_MODULE bookstoreapi.settings.prod
 
 COPY requirements.txt /var/app/requirements.txt
 RUN pip install --no-cache-dir -r /var/app/requirements.txt
 
-COPY       . /var/app/bookstoreapi
+COPY       bookstoreapi /var/app/bookstoreapi
 
-COPY       scripts/run_prod.sh /var/app/run_prod.sh
-COPY       scripts/test_local_backend.sh /var/app/test_local_backend.sh
-RUN        chmod +x run_prod.sh
+COPY       pytest.ini /var/app/pytest.ini
+COPY       manage.py /var/app/manage.py
+COPY       quick_test_seeding.py /var/app/quick_test_seeding.py
+COPY       Makefile /var/app/Makefile
+
+COPY       scripts/run_prod.sh /var/app/scripts/run_prod.sh
+RUN        chmod +x /var/app/scripts/run_prod.sh
 
 EXPOSE     8001
-CMD        ["/var/app/run_prod.sh"]
+CMD        ["make run_prod"]

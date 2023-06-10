@@ -14,6 +14,10 @@ run_local: ## Starts local django server
 	make clean
 	bash scripts/run_local.sh
 
+run_prod: ## Starts local django server
+	make clean
+	bash scripts/run_prod.sh
+
 populate_db: ## Populate Application DB with dummy data
 	make clean
 	python quick_test_seeding.py

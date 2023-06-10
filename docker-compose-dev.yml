@@ -10,7 +10,7 @@ services:
       - ./bookstore.env
     volumes:
       - ./bookstoreapi:/var/app/bookstoreapi
-    command: /var/app/run_local.sh
+    command: /var/app/scripts/run_local.sh
     ports:
       - '8001:8001'
     image: bookstoreapi_dev:latest
@@ -35,23 +35,10 @@ services:
       - ./bookstore.env
     image: bookstoreapi_dev
     command: >
-      sh /var/celery/start_celery_server.sh
+      sh -c "cd bookstoreapi && celery -A bookstoreapi worker -B -D && celery worker -l info -A bookstoreapi"
     depends_on:
       - redis
       - bookstoreapi-dev
-      - celery-flower
-    networks:
-      - base-network
-
-  celery-flower:
-    environment:
-      - CELERY_BROKER_URL=redis://redis/0
-      - FLOWER_PORT=8888
-    image: mher/flower
-    ports:
-      - "8888:8888"
-    depends_on:
-      - redis
     networks:
       - base-network
 

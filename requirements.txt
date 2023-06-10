@@ -1,11 +1,11 @@
-Django~=3.2.9
-pydantic~=1.8.2
-celery==4.2.1
+Django~=4.2.2
+pydantic
+celery
 django-cors-headers==3.5.0
 factory-boy==2.12.0
-gunicorn==20.0.4
-psycopg2-binary==2.8.6
-redis==3.5.3
+gunicorn
+psycopg2-binary
+redis
 django-ninja-extra
 django-ninja-jwt
 flake8==4.0.1

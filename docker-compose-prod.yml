@@ -2,15 +2,13 @@ version: '3'
 
 services:
   bookstoreapi:
-    container_name: bookstoreapi
+    container_name: bookstore_api
     build:
       context: .
       dockerfile: '${PWD}/docker/prod.Dockerfile'
     env_file:
-      - ./.env
-    command: /var/app/run_prod.sh
-    ports:
-      - '8001:8001'
+      - ./bookstore-prod.env
+    command: /var/app/scripts/run_prod.sh
     image: bookstoreapi:latest
     depends_on:
       - base
@@ -19,10 +17,13 @@ services:
       - base-network
 
   bookstoreapi_db:
+    container_name: bookstoreapi_db
     image: postgres
     restart: always
     env_file:
-      - ./bookstore.env
+      - ./bookstore-prod.env
+    ports:
+      - '5432:5432'
     volumes:
       - bookstoreapi-db:/var/lib/postgresql/data
     networks:
@@ -30,41 +31,15 @@ services:
 
   celery:
     env_file:
-      - ./.env
-    image: bookstoreapi
+      - ./bookstore-prod.env
+    image: bookstoreapi:latest
     command: >
-      sh /var/celery/start_celery_server.sh
+      sh -c "celery -A bookstoreapi worker -B -D && celery worker -l info -A bookstoreapi"
     depends_on:
       - redis
       - bookstoreapi
-      - celery-flower
     networks:
       - base-network
-
-  celery-beat:
-    env_file:
-      - ./bookstore.env
-    command: >
-      sh /var/celery/start_celery_beat_server.sh
-    image: bookstoreapi
-    depends_on:
-      - celery
-    restart: on-failure
-    networks:
-      - base-network
-
-  celery-flower:
-    environment:
-      - CELERY_BROKER_URL=redis://redis/0
-      - FLOWER_PORT=8888
-    image: mher/flower
-    ports:
-      - "8888:8888"
-    depends_on:
-      - redis
-    networks:
-      - base-network
-      - web
 
   nginx:
     build: ./nginx
@@ -73,7 +48,9 @@ services:
     depends_on:
       - bookstoreapi
     volumes:
-      - static_volume:/var/app/bookstoreapi/staticfiles
+      - static_volume:/var/app/bookstoreapi/static
+    networks:
+      - base-network
 
 volumes:
   static_volume:

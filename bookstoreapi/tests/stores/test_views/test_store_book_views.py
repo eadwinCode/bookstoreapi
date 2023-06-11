@@ -19,7 +19,7 @@ class TestStoreView:
         build_store_list(owner=user, batch_count=4)
         headers = get_authentication_header(user)
         client = testing.TestClient(StoresController)
-        response = client.get('', headers=headers)
+        response = client.get("", headers=headers)
 
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json().get("results")) == 4
@@ -31,7 +31,7 @@ class TestStoreView:
             "name": "New BookStore",
             "bio": "Some description",
         }
-        response = client.post('', json=payload, headers=headers)
+        response = client.post("", json=payload, headers=headers)
         assert response.status_code == status.HTTP_201_CREATED
         assert Store.objects.filter(
             name="New BookStore"

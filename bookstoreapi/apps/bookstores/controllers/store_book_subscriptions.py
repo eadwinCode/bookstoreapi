@@ -3,7 +3,6 @@ from uuid import UUID
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from ninja_extra import api_controller, route, status
-from ninja_extra.controllers import Detail, Ok
 from ninja_extra.pagination import (
     PageNumberPaginationExtra,
     PaginatedResponseSchema,
@@ -16,6 +15,7 @@ from ninja_jwt.authentication import JWTAuth
 from bookstoreapi.apps.bookstores.mixins import StoryBookQuerySetMixin
 from bookstoreapi.apps.bookstores.models import StoreBook, StoreBookSubscription
 from bookstoreapi.apps.bookstores.schemes.stores import StoreBookSubscriptionSerializer
+from bookstoreapi.apps.bookstores.schemes.books import IdSchema, OKSchema
 
 User = get_user_model()
 
@@ -25,7 +25,7 @@ class StoryBookSubscribeController(StoryBookQuerySetMixin):
     @route.post(
         "/{uuid:store_book_id}/{int:user_id}/subscriber",
         url_name="subscribe",
-        response=Ok,
+        response=IdSchema,
     )
     @transaction.atomic
     def subscribe(self, store_book_id: UUID, user_id: int):
@@ -43,12 +43,12 @@ class StoryBookSubscribeController(StoryBookQuerySetMixin):
         subscription = StoreBookSubscription.objects.create(
             store_book=store_book, subscriber=user
         )
-        return self.Id(id=subscription.pk)
+        return dict(id=subscription.pk)
 
     @route.post(
         "/{uuid:store_book_subscription_id}/unsubscribe",
         url_name="unsubscribe",
-        response=Detail(status_code=status.HTTP_204_NO_CONTENT),
+        response={status.HTTP_204_NO_CONTENT: OKSchema},
     )
     @transaction.atomic
     def unsubscribe(self, store_book_subscription_id: UUID):

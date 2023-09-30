@@ -18,7 +18,7 @@ from bookstoreapi.apps.users.schema import (
 User = get_user_model()
 
 
-@api_controller("/api/auth", tags=["users"], auth=JWTAuth())
+@api_controller("/auth", tags=["users"], auth=JWTAuth())
 class UserController:
     @route.post(
         "/create", response={201: UserTokenOutSchema}, url_name="user-create", auth=None
@@ -55,7 +55,7 @@ class UserController:
         return self.create_response("", status_code=status.HTTP_204_NO_CONTENT)
 
 
-@api_controller("/api/auth", tags=["auth"])
+@api_controller("/auth", tags=["auth"])
 class UserTokenController(TokenObtainSlidingController):
     auto_import = True
 

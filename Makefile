@@ -10,29 +10,23 @@ clean: ## Removing cached python compiled files
 	find . -name \*~  | xargs  rm -fv
 	find . -name __pycache__  | xargs  rm -rfv
 
-run_local: ## Starts local django server
-	make clean
+run_local:clean ## Starts local django server
 	bash scripts/run_local.sh
 
-run_prod: ## Starts local django server
-	make clean
+run_prod:clean ## Starts local django server
 	bash scripts/run_prod.sh
 
-populate_db: ## Populate Application DB with dummy data
-	make clean
+populate_db:clean ## Populate Application DB with dummy data
 	python quick_test_seeding.py
 
-test: ## Run tests
-	make clean
+test:clean ## Run tests
 	pytest .
 
-lint: ## Run code linters
-	make clean
+lint:clean ## Run code linters
 	black --check bookstoreapi
 	isort --check bookstoreapi
 	flake8 bookstoreapi
 
-fmt format: ## Run code formatters
-	make clean
+fmt format:clean ## Run code formatters
 	black bookstoreapi
 	isort bookstoreapi

@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from ninja_extra import api_controller, route, status
-from ninja_extra.controllers import Detail, Id
 from ninja_extra.pagination import (
     PageNumberPaginationExtra,
     PaginatedResponseSchema,
@@ -12,7 +11,7 @@ from pydantic.types import UUID4
 
 from bookstoreapi.apps.bookstores.mixins import StoreViewMixin
 from bookstoreapi.apps.bookstores.models import Store, StoreBook
-from bookstoreapi.apps.bookstores.schemes.books import BookSchema, CreateBookSchema
+from bookstoreapi.apps.bookstores.schemes.books import BookSchema, CreateBookSchema, OKSchema, IdSchema
 from bookstoreapi.apps.bookstores.schemes.stores import (
     BorrowOrReturnStoreBookSchema,
     StoreBookSchema,
@@ -27,14 +26,14 @@ from bookstoreapi.apps.core.logger import logger
 
 @api_controller("/stores", permissions=[IsAuthenticated], auth=JWTAuth())
 class StoresController(StoreViewMixin):
-    @route.post("", response=[Id, Detail(status_code=400)], url_name="create")
+    @route.post("", response=[(201, IdSchema), (400, OKSchema)], url_name="create")
     def create_store(self, store: StoreCreateSchema):
         try:
             store = store.create_store(owner=self.context.request.user)
-            return self.Id(store.pk)
+            return 201, dict(id=store.pk)
         except Exception as ex:
             logger.error(f"failed to create store: {ex}")
-            return Detail(str(ex), status_code=400)
+            return 400, dict(details=str(ex))
 
     @route.get(
         "",
@@ -66,7 +65,7 @@ class StoresController(StoreViewMixin):
         return store
 
     @route.delete(
-        "/{uuid:store_id}", url_name="destroy", response=Detail(status_code=204)
+        "/{uuid:store_id}", url_name="destroy", response={204: dict}
     )
     def delete_store(self, store_id: str):
         store = self.get_object_or_exception(
@@ -101,7 +100,7 @@ class StoreBookController(StoreViewMixin):
 
     @route.post(
         "/book/create",
-        response=[(201, BookSchema), Detail(status_code=400)],
+        response=[(201, BookSchema), (400, OKSchema)],
         url_name="book-create",
     )
     def add_store_book(self, store_id: UUID4, book: CreateBookSchema):

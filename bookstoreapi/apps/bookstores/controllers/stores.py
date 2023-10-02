@@ -11,7 +11,12 @@ from pydantic.types import UUID4
 
 from bookstoreapi.apps.bookstores.mixins import StoreViewMixin
 from bookstoreapi.apps.bookstores.models import Store, StoreBook
-from bookstoreapi.apps.bookstores.schemes.books import BookSchema, CreateBookSchema, OKSchema, IdSchema
+from bookstoreapi.apps.bookstores.schemes.books import (
+    BookSchema,
+    CreateBookSchema,
+    IdSchema,
+    OKSchema,
+)
 from bookstoreapi.apps.bookstores.schemes.stores import (
     BorrowOrReturnStoreBookSchema,
     StoreBookSchema,
@@ -64,9 +69,7 @@ class StoresController(StoreViewMixin):
         store_schema.update(store)
         return store
 
-    @route.delete(
-        "/{uuid:store_id}", url_name="destroy", response={204: dict}
-    )
+    @route.delete("/{uuid:store_id}", url_name="destroy", response={204: dict})
     def delete_store(self, store_id: str):
         store = self.get_object_or_exception(
             self.get_queryset(),

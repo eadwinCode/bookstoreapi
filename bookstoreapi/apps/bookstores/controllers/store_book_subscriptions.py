@@ -14,8 +14,8 @@ from ninja_jwt.authentication import JWTAuth
 
 from bookstoreapi.apps.bookstores.mixins import StoryBookQuerySetMixin
 from bookstoreapi.apps.bookstores.models import StoreBook, StoreBookSubscription
-from bookstoreapi.apps.bookstores.schemes.stores import StoreBookSubscriptionSerializer
 from bookstoreapi.apps.bookstores.schemes.books import IdSchema, OKSchema
+from bookstoreapi.apps.bookstores.schemes.stores import StoreBookSubscriptionSerializer
 
 User = get_user_model()
 

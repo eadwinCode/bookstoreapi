@@ -1,5 +1,7 @@
-from typing import Optional, Any
+from typing import Any, Optional
+
 from pydantic import BaseModel
+
 from bookstoreapi.apps.bookstores.models import Book
 from bookstoreapi.apps.core.schema_fix import BookAPIModelSchema
 from bookstoreapi.apps.users.schema import UserRetrieveSchema

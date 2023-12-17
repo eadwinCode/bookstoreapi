@@ -6,7 +6,8 @@ from ninja_extra import service_resolver
 from ninja_extra.controllers import RouteContext
 from ninja_extra.exceptions import APIException
 from ninja_schema import ModelSchema, Schema, model_validator
-from pydantic import AnyHttpUrl
+from pydantic.networks import AnyUrl
+from typing_extensions import Annotated
 
 from bookstoreapi.apps.bookstores.models import Store, StoreBook, StoreBookSubscription
 from bookstoreapi.apps.bookstores.schemes.books import BookSchema
@@ -81,13 +82,13 @@ class StoreRetrieveSchema(ModelSchema):
 
 class StoreBookSchema(ModelSchema):
     borrowed_by: Optional[UserRetrieveSchema]
-    store: AnyHttpUrl
+    store: Annotated[str, AnyUrl]
     book: BookSchema
 
     class Config:
         model = StoreBook
 
-    @model_validator("store", pre=True)
+    @model_validator("store", mode='before')
     def store_validate(cls, value_data):
         context: RouteContext = service_resolver(RouteContext)
         value = reverse("store:detail", kwargs=dict(store_id=value_data.id))
@@ -96,14 +97,14 @@ class StoreBookSchema(ModelSchema):
 
 class BorrowOrReturnStoreBookSchema(ModelSchema):
     borrowed_by: Optional[UserRetrieveSchema]
-    store: Optional[AnyHttpUrl]
+    store: Optional[Annotated[str, AnyUrl]]
     book: Optional[BookSchema]
 
     class Config:
         model = StoreBook
         include = ["borrowed_by", "store", "book"]
 
-    @model_validator("store", pre=True)
+    @model_validator("store", mode='before')
     def store_validate(cls, value_data):
         context: RouteContext = service_resolver(RouteContext)
         value = reverse("store:detail", kwargs=dict(store_id=value_data.id))

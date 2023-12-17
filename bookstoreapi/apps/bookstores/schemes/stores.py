@@ -88,7 +88,7 @@ class StoreBookSchema(ModelSchema):
     class Config:
         model = StoreBook
 
-    @model_validator("store", mode='before')
+    @model_validator("store", mode="before")
     def store_validate(cls, value_data):
         context: RouteContext = service_resolver(RouteContext)
         value = reverse("store:detail", kwargs=dict(store_id=value_data.id))
@@ -104,7 +104,7 @@ class BorrowOrReturnStoreBookSchema(ModelSchema):
         model = StoreBook
         include = ["borrowed_by", "store", "book"]
 
-    @model_validator("store", mode='before')
+    @model_validator("store", mode="before")
     def store_validate(cls, value_data):
         context: RouteContext = service_resolver(RouteContext)
         value = reverse("store:detail", kwargs=dict(store_id=value_data.id))
